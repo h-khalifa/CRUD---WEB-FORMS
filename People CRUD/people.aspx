@@ -14,23 +14,24 @@
 <body>
     <div class="navbar navbar-inverse">
     </div>
-   <%-- <div style="margin:150px"></div>--%>
+    <%-- <div style="margin:150px"></div>--%>
     <form id="form1" runat="server">
-        <div class="container" >
-            <asp:GridView ID="GridView1" runat="server" DataSourceID="EntityDataSource1" AutoGenerateColumns="False" DataKeyNames="Id" ShowFooter="True" Class="table table-hover table-responsive text-center" style="width:100%;border:none;">
+        <div class="container">
+            <asp:GridView ID="GridView1" runat="server" DataSourceID="EntityDataSource1" AutoGenerateColumns="False" DataKeyNames="Id" ShowFooter="True" Class="table table-hover table-responsive text-center" Style="width: 100%; border: none;">
                 <Columns>
-                   <%-- <asp:BoundField DataField="Id" HeaderText="Id" ReadOnly="True" SortExpression="Id" />--%>
+                    <%-- <asp:BoundField DataField="Id" HeaderText="Id" ReadOnly="True" SortExpression="Id" />--%>
                     <asp:TemplateField ShowHeader="False">
                         <EditItemTemplate>
-                            <asp:LinkButton ID="LinkButton1" runat="server" CausesValidation="True" CommandName="Update" Text="Update" ValidationGroup="Edit"></asp:LinkButton>
+                            <asp:LinkButton ID="LinkButton1" runat="server" CausesValidation="True"  Text="Update" ValidationGroup="Edit" CssClass='<%# Bind("Id") %>' OnClick="LinkButton1_Click" ></asp:LinkButton>
                             &nbsp;<asp:LinkButton ID="LinkButton2" runat="server" CausesValidation="False" CommandName="Cancel" Text="Cancel"></asp:LinkButton>
                         </EditItemTemplate>
                         <ItemTemplate>
                             <asp:LinkButton ID="LinkButton1" runat="server" CausesValidation="False" CommandName="Edit" Text="Edit"></asp:LinkButton>
-                            &nbsp;<asp:LinkButton ID="LinkButton2" runat="server" CausesValidation="False" CommandName="Delete" Text="Delete"></asp:LinkButton>
+                            &nbsp;<asp:LinkButton ID="LinkButton2" runat="server" CausesValidation="False" Text="Delete" CssClass='<%# Bind("Id") %>' OnClick="LinkButton2_Click" ></asp:LinkButton>
                         </ItemTemplate>
                         <FooterTemplate>
-                            <asp:LinkButton ID="LinkButton_AddPerson" runat="server" OnClick="LinkButton_AddPerson_Click1" ValidationGroup="Add">Add New Person</asp:LinkButton>
+                            <%--<Button ID="LinkButton_AddPerson" runat="server" OnClick="LinkButton_AddPerson_Click1" ValidationGroup="Add" class="btn btn-primary">Add New Person</Button>--%>
+                            <asp:Button ID="LinkButton_AddPerson" runat="server" OnClick="LinkButton_AddPerson_Click1" ValidationGroup="Add" Text="Add New Person" class="btn btn-primary" />
                         </FooterTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Name" SortExpression="Name" HeaderStyle-CssClass="text-center">
@@ -75,10 +76,10 @@
                             <asp:CheckBox ID="CheckBox_AddPersonIsMarried" runat="server" />
                         </FooterTemplate>
                     </asp:TemplateField>
-     
+
                     <asp:TemplateField HeaderText="Gender" SortExpression="Gender" HeaderStyle-CssClass="text-center">
                         <EditItemTemplate>
-                            <asp:DropDownList ID="DropDownList1" runat="server" selectedvalue='<%# Bind("Gender") %>'>
+                            <asp:DropDownList ID="DropDownList1" runat="server" SelectedValue='<%# Bind("Gender") %>'>
                                 <asp:ListItem>Male</asp:ListItem>
                                 <asp:ListItem>Female</asp:ListItem>
                                 <asp:ListItem></asp:ListItem>
@@ -98,14 +99,16 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Birth Date" SortExpression="BDate" HeaderStyle-CssClass="text-center">
                         <EditItemTemplate>
-                            <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("BDate","{0:d}") %>' class="EditBDate" ></asp:TextBox>
-                        </EditItemTemplate>
+                            <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("BDate","{0:d}") %>' class="EditBDate"></asp:TextBox>
+                            <asp:CustomValidator ID="CustomValidator_EditPersonBDate" runat="server" ErrorMessage="please enter valid date" ControlToValidate="TextBox1" OnServerValidate="CustomValidator_AddPersonBDate_ServerValidate" Text="*" ForeColor="Red" ValidationGroup="Edit" ValidateEmptyText="false" SetFocusOnError="True" Display="Dynamic"></asp:CustomValidator>                       
+                            </EditItemTemplate>
                         <ItemTemplate>
                             <asp:Label ID="Label1" runat="server" Text='<%# Bind("BDate","{0:d}") %>'></asp:Label>
                         </ItemTemplate>
                         <HeaderStyle CssClass="text-center"></HeaderStyle>
                         <FooterTemplate>
-                            <asp:TextBox ID="TextBox_AddPersonBirthDate" runat="server" placeholder="Birth Date" class="TextBox_AddPersonBirthDate"></asp:TextBox>
+                            <asp:TextBox ID="TextBox_AddPersonBirthDate" runat="server" placeholder="Birth Date" class="TextBox_AddPersonBirthDate" CausesValidation="True" ValidationGroup="Add"></asp:TextBox>
+                            <asp:CustomValidator ID="CustomValidator_AddPersonBDate" runat="server" ErrorMessage="please enter valid date" ControlToValidate="TextBox_AddPersonBirthDate" OnServerValidate="CustomValidator_AddPersonBDate_ServerValidate" Text="*" ForeColor="Red" ValidationGroup="Add" ValidateEmptyText="false" SetFocusOnError="True" Display="Dynamic"></asp:CustomValidator>
                         </FooterTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -118,16 +121,20 @@
             <h2 class="text-center">Get or Refresh People Names</h2>
             <button class="btn btn-default" id="getnames" type="button">Get</button>
             </asp:DataList>
-            <ul ID="BulletedList1"  class="list-group" >
+            <ul id="BulletedList1" class="list-group">
             </ul>
-            
 
+            <hr />
+            <h3 class="text-center"> Get People Names Using Service </h3>
+            <asp:Button ID="Button_GetNames_Service" runat="server" Text="Get" class="btn btn-default" OnClick="Button_GetNames_Service_Click"  />
+            <br />
+            <asp:Label ID="Label_DisplayNames" runat="server" Text=""></asp:Label>
 
         </div>
     </form>
     <div class="container">
         <hr />
-        <footer >
+        <footer>
             People CRUD - DEMO
         </footer>
     </div>
@@ -135,8 +142,8 @@
 </html>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('.EditBDate').datepicker({ dateFormat: 'dd/mm/yy' });
-        $('.TextBox_AddPersonBirthDate').datepicker({ dateFormat: 'dd/mm/yy' });
+        $('.EditBDate').datepicker({ dateFormat: 'dd/mm/yy', maxDate: new Date, minDate: new Date(1900, 1, 1) });
+        $('.TextBox_AddPersonBirthDate').datepicker({ dateFormat: 'dd/mm/yy', maxDate: new Date, minDate: new Date(1900, 1, 1) });
         $('#getnames').click(function () {
             var blist = $('.list-group');
             blist.empty();

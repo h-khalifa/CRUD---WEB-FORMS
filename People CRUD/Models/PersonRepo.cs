@@ -46,6 +46,7 @@ namespace People_CRUD.Models
             try
             {
                 Context.people.Attach(person);
+                Context.Entry(person).State = System.Data.EntityState.Modified;
                 Context.SaveChanges();
                 return true;
             }
